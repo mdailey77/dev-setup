@@ -1,0 +1,47 @@
+{
+    "security.workspace.trust.untrustedFiles": "open",
+    "editor.fontSize": 14,
+    "git.autofetch": true,
+    "[python]": {
+        "editor.formatOnType": true
+    },
+    "workbench.iconTheme": "material-icon-theme",
+    "terminal.integrated.fontSize": 14,
+    "workbench.colorTheme": "Dracula Theme",
+    "workbench.editorAssociations": {
+        "git-rebase-todo": "default"
+    },
+    "editor.minimap.enabled": false,
+    "chat.commandCenter.enabled": false,
+    "go.toolsManagement.autoUpdate": true,
+    "gitlab.duoChat.enabled": false,
+    "git.replaceTagsWhenPull": true,
+    "gitlab.duoCodeSuggestions.enabled": false,
+    "gitlab.duo.enabledWithoutGitlabProject": false,
+    "gitlab.duoCodeSuggestions.openTabsContext": false,
+    "gitlab.keybindingHints.enabled": false,
+    "files.associations": {
+        "*.py": "python"
+    },
+    "hediet.vscode-drawio.resizeImages": null,
+    "gitlens.views.scm.grouped.views": {
+        "commits": true,
+        "branches": true,
+        "remotes": true,
+        "stashes": true,
+        "tags": true,
+        "worktrees": true,
+        "contributors": true,
+        "fileHistory": true,
+        "repositories": true,
+        "searchAndCompare": false,
+        "launchpad": false
+    },
+    "files.trimTrailingWhitespace": true,
+    "claudeCode.preferredLocation": "panel",
+    "http.systemCertificatesNode": true,
+    "geminicodeassist.project": "",
+    "diffEditor.codeLens": true,
+    "chatgpt.cliExecutable": "",
+    "chatgpt.commentCodeLensEnabled": false
+}
