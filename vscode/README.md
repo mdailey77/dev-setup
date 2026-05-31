@@ -167,6 +167,7 @@ This captures:
 
 - Installed VS Code extensions
 - VS Code user settings
+- VS Code tasks.json
 - VS Code keybindings, if present
 - Existing global pre-commit hook, if configured
 
@@ -229,6 +230,14 @@ The installer copies the repo to:
 ```text
 ~/.config/devops-vscode-profile
 ```
+
+## Adding VS Code tasks
+
+The 'Update Workspace Repos' Task is a bash script `update-workspace-repos.sh` located in `vscode/git/update-workspace-repos.sh`.
+To add this task along with a series of linting tasks. Open the Command Palette in VS Code and select 'Task: Open Workspace Tasks'.
+Paste the contents of `vscode/tasks.json` into the tasks section of the opened workspace file and save the file. To run a task, go to
+Command Palette, select 'Tasks: Run Task' then click on the task to run.
+If a `.vscode` folder is manually created in the workspace folder and the `tasks.json` is added, VS Code will not recognize it.
 
 ## Uninstall
 
