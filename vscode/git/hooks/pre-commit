@@ -1,0 +1,20 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+REPO_ROOT="$(git rev-parse --show-toplevel 2>/dev/null || true)"
+
+if [[ -z "$REPO_ROOT" ]]; then
+  exit 0
+fi
+
+cd "$REPO_ROOT"
+
+LINTER="$HOME/.config/devops-vscode-profile/lint/lint-staged-devops.sh"
+
+if [[ ! -x "$LINTER" ]]; then
+  echo "Global DevOps linter not found or not executable: $LINTER"
+  echo "Run the setup installer again."
+  exit 1
+fi
+
+"$LINTER"

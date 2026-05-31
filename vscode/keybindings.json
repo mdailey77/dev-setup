@@ -1,0 +1,14 @@
+[
+  {
+    "key": "cmd+shift+l",
+    "command": "workbench.action.tasks.runTask",
+    "args": "lint:all",
+    "when": "isMac"
+  },
+  {
+    "key": "ctrl+shift+l",
+    "command": "workbench.action.tasks.runTask",
+    "args": "lint:all",
+    "when": "isLinux || isWindows"
+  }
+]

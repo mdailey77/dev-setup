@@ -1,0 +1,13 @@
+title = "Global GitLeaks configuration"
+
+[allowlist]
+description = "Global allowlist"
+paths = [
+  '''node_modules/''',
+  '''vendor/''',
+  '''dist/''',
+  '''build/''',
+  '''.terraform/''',
+  '''.venv/''',
+  '''coverage/'''
+]
