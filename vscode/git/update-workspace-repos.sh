@@ -118,8 +118,9 @@ delete_merged_local_branches() {
   git branch --merged "$default_branch" |
     sed 's/^[* ]*//' |
     grep -vE "^(${default_branch}|main|master|develop|dev|stage|staging|test|prod|production)$" |
-    while read -r branch; do
+    while IFS= read -r branch; do
       [[ -z "$branch" ]] && continue
+
       echo "Deleting merged local branch: $branch"
       run git branch -d "$branch"
     done
@@ -133,14 +134,75 @@ delete_merged_remote_branches() {
     grep '^origin/' |
     grep -vE "^origin/(${default_branch}|HEAD|main|master|develop|dev|stage|staging|test|prod|production)$" |
     sed 's|^origin/||' |
-    while read -r branch; do
+    while IFS= read -r branch; do
       [[ -z "$branch" ]] && continue
+
       echo "Deleting merged remote branch: origin/$branch"
       run git push origin --delete "$branch"
     done
 }
 
+process_repo() {
+  local repo="$1"
+  local default_branch
+
+  print_header "Repository: $repo"
+
+  cd "$repo" || {
+    echo "ERROR: Could not enter repo: $repo" >&2
+    return 1
+  }
+
+  if ! git remote get-url origin >/dev/null 2>&1; then
+    echo "Skipping: no origin remote."
+    return 0
+  fi
+
+  if has_uncommitted_changes; then
+    echo "Skipping: repository has uncommitted changes."
+    git status --short
+    return 0
+  fi
+
+  echo "Fetching and pruning..."
+  run git fetch origin --prune --tags
+
+  default_branch="$(get_default_branch || true)"
+
+  if [[ -z "${default_branch:-}" ]]; then
+    echo "Skipping: could not determine default branch."
+    return 0
+  fi
+
+  echo "Default branch: $default_branch"
+
+  if ! git show-ref --verify --quiet "refs/heads/$default_branch"; then
+    echo "Creating local tracking branch: $default_branch"
+    run git checkout -B "$default_branch" "origin/$default_branch"
+  else
+    echo "Switching to: $default_branch"
+    run git switch "$default_branch"
+  fi
+
+  echo "Pulling latest changes..."
+  run git pull --ff-only origin "$default_branch"
+
+  echo "Deleting merged local branches..."
+  delete_merged_local_branches "$default_branch"
+
+  if [[ "$DELETE_REMOTE_MERGED" == true ]]; then
+    echo "Deleting merged remote branches..."
+    delete_merged_remote_branches "$default_branch"
+  fi
+
+  echo "Done: $repo"
+}
+
 main() {
+  local repo
+  local repo_count=0
+  local failed_count=0
+
   if [[ ! -d "$ROOT_DIR" ]]; then
     echo "ERROR: Workspace root does not exist: $ROOT_DIR" >&2
     exit 1
@@ -148,69 +210,27 @@ main() {
 
   print_header "Scanning workspace: $ROOT_DIR"
 
-  mapfile -t repos < <(find_git_repos)
+  while IFS= read -r repo; do
+    repo_count=$((repo_count + 1))
 
-  if [[ "${#repos[@]}" -eq 0 ]]; then
+    if ! process_repo "$repo"; then
+      failed_count=$((failed_count + 1))
+    fi
+  done < <(find_git_repos)
+
+  if [[ "$repo_count" -eq 0 ]]; then
     echo "No Git repositories found."
     exit 0
   fi
 
-  echo "Found ${#repos[@]} repositories."
-
-  for repo in "${repos[@]}"; do
-    print_header "Repository: $repo"
-
-    cd "$repo" || {
-      echo "ERROR: Could not enter repo: $repo" >&2
-      continue
-    }
-
-    if ! git remote get-url origin >/dev/null 2>&1; then
-      echo "Skipping: no origin remote."
-      continue
-    fi
-
-    if has_uncommitted_changes; then
-      echo "Skipping: repository has uncommitted changes."
-      git status --short
-      continue
-    fi
-
-    echo "Fetching and pruning..."
-    run git fetch origin --prune --tags
-
-    default_branch="$(get_default_branch || true)"
-
-    if [[ -z "${default_branch:-}" ]]; then
-      echo "Skipping: could not determine default branch."
-      continue
-    fi
-
-    echo "Default branch: $default_branch"
-
-    if ! git show-ref --verify --quiet "refs/heads/$default_branch"; then
-      echo "Creating local tracking branch: $default_branch"
-      run git checkout -B "$default_branch" "origin/$default_branch"
-    else
-      echo "Switching to: $default_branch"
-      run git switch "$default_branch"
-    fi
-
-    echo "Pulling latest changes..."
-    run git pull --ff-only origin "$default_branch"
-
-    echo "Deleting merged local branches..."
-    delete_merged_local_branches "$default_branch"
-
-    if [[ "$DELETE_REMOTE_MERGED" == true ]]; then
-      echo "Deleting merged remote branches..."
-      delete_merged_remote_branches "$default_branch"
-    fi
-
-    echo "Done: $repo"
-  done
-
   print_header "Workspace update complete"
+
+  echo "Repositories found: $repo_count"
+  echo "Repositories failed: $failed_count"
+
+  if [[ "$failed_count" -gt 0 ]]; then
+    exit 1
+  fi
 }
 
-main
+main "$@"
