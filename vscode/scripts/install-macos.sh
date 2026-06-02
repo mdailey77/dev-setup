@@ -3,7 +3,7 @@ set -euo pipefail
 
 SOURCE_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 SETUP_DIR="$HOME/.config/devops-vscode-profile"
-# VSCODE_USER_DIR="$HOME/Library/Application Support/Code/User"
+VSCODE_USER_DIR="$HOME/Library/Application Support/Code/User"
 GLOBAL_HOOKS_DIR="$HOME/.config/git/hooks"
 
 mkdir -p "$SETUP_DIR"
