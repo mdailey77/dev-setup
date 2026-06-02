@@ -183,9 +183,9 @@ fi
 
 if [[ "${#markdown_files[@]}" -gt 0 ]]; then
 	if command_exists markdownlint-cli2; then
-		run_or_fail "Markdown lint" markdownlint-cli2 "${markdown_files[@]}"
+		run_or_fail "Markdown lint" markdownlint-cli2 "${markdown_files[@]}" --config "$CONFIG_DIR"/markdownlint.json
 	elif command_exists markdownlint; then
-		run_or_fail "Markdown lint" markdownlint "${markdown_files[@]}"
+		run_or_fail "Markdown lint" markdownlint "${markdown_files[@]}" --config "$CONFIG_DIR"/markdownlint.json
 	else
 		echo "SKIP: markdownlint-cli2 or markdownlint not installed"
 		echo
