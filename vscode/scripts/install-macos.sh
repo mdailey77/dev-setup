@@ -7,7 +7,7 @@ VSCODE_USER_DIR="$HOME/Library/Application Support/Code/User"
 GLOBAL_HOOKS_DIR="$HOME/.config/git/hooks"
 
 mkdir -p "$SETUP_DIR"
-# mkdir -p "$VSCODE_USER_DIR"
+mkdir -p "$VSCODE_USER_DIR"
 mkdir -p "$GLOBAL_HOOKS_DIR"
 
 echo "Copying setup files to $SETUP_DIR..."
@@ -36,6 +36,7 @@ fi
 
 echo "Installing global Git hook..."
 cp "$SETUP_DIR/git/hooks/pre-commit" "$GLOBAL_HOOKS_DIR/pre-commit"
+chmod +x "$SETUP_DIR/git/update-workspace-repos.sh"
 chmod +x "$GLOBAL_HOOKS_DIR/pre-commit"
 chmod +x "$SETUP_DIR/lint/lint-staged-devops.sh"
 
