@@ -93,6 +93,26 @@
                 "panel": "dedicated",
                 "clear": true
             }
+        },
+        {
+            "label": "GitLab: Create Merge Request",
+            "type": "shell",
+            "command": "${env:HOME}/.config/devops-vscode-profile/scripts/create-gitlab-mr.sh",
+            "group": "build",
+            "problemMatcher": [],
+            "options": {
+                "cwd": "${workspaceFolder}"
+            }
+        },
+        {
+            "label": "GitLab: Create Draft Merge Request",
+            "type": "shell",
+            "command": "DRAFT=true ${env:HOME}/.config/devops-vscode-profile/scripts/create-gitlab-mr.sh",
+            "group": "build",
+            "problemMatcher": [],
+            "options": {
+                "cwd": "${workspaceFolder}"
+            }
         }
     ]
 }
