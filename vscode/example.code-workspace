@@ -1,0 +1,108 @@
+{
+  "folders": [
+    {
+      "path": "./path-to-repo"
+    },
+    {
+      "path": "./path-to-another-repo"
+    }
+  ],
+  "tasks": {
+    "version": "2.0.0",
+    "tasks": [
+      {
+        "label": "lint:yaml",
+        "type": "shell",
+        "command": "yamllint .",
+        "problemMatcher": []
+      },
+      {
+        "label": "lint:shell",
+        "type": "shell",
+        "command": "find . -type f -name '*.sh' -print0 | xargs -0 shellcheck",
+        "problemMatcher": []
+      },
+      {
+        "label": "format:shell",
+        "type": "shell",
+        "command": "find . -type f -name '*.sh' -print0 | xargs -0 shfmt -w",
+        "problemMatcher": []
+      },
+      {
+        "label": "lint:terraform",
+        "type": "shell",
+        "command": "terraform fmt -recursive -check && terraform validate && tflint --recursive",
+        "options": {
+          "cwd": "${workspaceFolder}"
+        },
+        "problemMatcher": []
+      },
+      {
+        "label": "format:terraform",
+        "type": "shell",
+        "command": "terraform fmt -recursive",
+        "problemMatcher": []
+      },
+      {
+        "label": "lint:ansible",
+        "type": "shell",
+        "command": "ansible-lint",
+        "problemMatcher": []
+      },
+      {
+        "label": "lint:kubernetes",
+        "type": "shell",
+        "command": "find . \\( -path './k8s/*.yaml' -o -path './k8s/*.yml' -o -path './manifests/*.yaml' -o -path './manifests/*.yml' \\) -print0 | xargs -0 kubeconform -strict -summary",
+        "problemMatcher": []
+      },
+      {
+        "label": "security:secrets",
+        "type": "shell",
+        "command": "gitleaks detect --source . --verbose",
+        "problemMatcher": []
+      },
+      {
+        "label": "lint:all",
+        "dependsOrder": "sequence",
+        "dependsOn": [
+          "lint:yaml",
+          "lint:shell",
+          "lint:terraform",
+          "lint:ansible",
+          "lint:kubernetes",
+          "security:secrets"
+        ],
+        "problemMatcher": []
+      },
+      {
+        "label": "Git: Update All Workspace Repositories",
+        "type": "shell",
+        "command": "${env:HOME}/.config/devops-vscode-profile/git/update-workspace-repos.sh",
+        "args": [
+          "/path/to/repos"
+        ],
+        "problemMatcher": [],
+        "presentation": {
+          "reveal": "always",
+          "panel": "dedicated",
+          "clear": true
+        }
+      },
+      {
+        "label": "Git: Dry Run Update All Workspace Repositories",
+        "type": "shell",
+        "command": "${env:HOME}/.config/devops-vscode-profile/git/update-workspace-repos.sh",
+        "args": [
+          "/path/to/repos",
+          "--dry-run"
+        ],
+        "problemMatcher": [],
+        "presentation": {
+          "reveal": "always",
+          "panel": "dedicated",
+          "clear": true
+        }
+      }
+    ]
+  }
+}
